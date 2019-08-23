@@ -3,6 +3,9 @@ const ui = new UI(),
   cocktail = new CocktailAPI();
 // Create teh event listeners
 function eventListeners() {
+  // document ready
+  document.addEventListener('DOMContentLoaded', documentReady);
+
   // event listener when form is siiubmitted
   const searchForm = document.querySelector('#search-form');
 
@@ -19,23 +22,25 @@ function eventListeners() {
 
 eventListeners();
 
-// get cocktails function
+// Get cocktails function
 function getCocktails(e) {
   e.preventDefault();
 
   const searchTerm = document.querySelector('#search').value;
 
-  // check something is on the search input
+  // Check something is on the search input
   if (searchTerm === '') {
-    // call ui prinit message
-    ui.printMessage('Please add a query into the form', 'danger');
+    // Call User Interface print message
+    ui.printMessage('Please add something into the form', 'danger');
   } else {
-    // server response from promise
+    // Server response from promise
     let serverResponse;
-    // type of search (ingredients, cocktails, or name)
-    let type = document.querySelector('#type').value;
 
-    // evaluate the type of method and then execute the query
+    // Type of search (ingredients, cocktails, or name)
+    const type = document.querySelector('#type').value;
+
+    // Evaluate the type of method and then execute the query
+
     switch (type) {
       case 'name':
         serverResponse = cocktail.getDrinksByName(searchTerm);
@@ -43,20 +48,28 @@ function getCocktails(e) {
       case 'ingredient':
         serverResponse = cocktail.getDrinksByIngredient(searchTerm);
         break;
+      case 'category':
+        serverResponse = cocktail.getDrinksByCategory(searchTerm);
+        break;
+      case 'alcohol':
+        serverResponse = cocktail.getDrinksByAlcohol(searchTerm);
+        break;
     }
 
     ui.clearResults();
 
+    // Query by the name of the drink
+
     serverResponse.then(cocktails => {
       if (cocktails.cocktails.drinks === null) {
-        // nothing exists
-        ui.printMessage('There are no results, try a different term', 'danger');
+        // Nothing exists
+        ui.printMessage("There're no results, try a different term ", 'danger');
       } else {
         if (type === 'name') {
-          // display with ingredients
+          // Display with ingredients
           ui.displayDrinksWithIngredients(cocktails.cocktails.drinks);
         } else {
-          // display without ingredients
+          // Display without Ingredients (category, alcohol, ingredient)
           ui.displayDrinks(cocktails.cocktails.drinks);
         }
       }
@@ -72,5 +85,13 @@ function resultsDelegation(e) {
       // displays single recipe in modal
       ui.displaySingleRecipe(recipe.recipe.drinks[0]);
     });
+  }
+}
+
+function documentReady() {
+  // select the search category select
+  const searchCategory = document.querySelector('.search-category');
+  if (searchCategory) {
+    ui.displayCategories();
   }
 }
