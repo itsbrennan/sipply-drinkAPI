@@ -1,4 +1,33 @@
 class UI {
+  // display the cocktails without ingredient
+  displayDrinks(drinks) {
+    const resultsWrapper = document.querySelector('.results-wrapper');
+    resultsWrapper.style.display = 'block';
+    // Insert the results
+    const resultsDiv = document.querySelector('#results');
+
+    // loop through drinks
+    drinks.forEach(drink => {
+      resultsDiv.innerHTML += `
+      <div class ="col-md-4">
+        <div class = "card my-3">
+          <img class ="card-img-top" src = "${drink.strDrinkThumb}" alt="${
+        drink.strDrink
+      }">
+      <div class="card-body">
+        <h2 class="card-title text-center">${drink.strDrink}</h2>
+        <a data-target="#recipe" href="#" class="btn btn-success get-recipe" data-toggle="modal" data-id="${
+          drink.idDrink
+        }">Get Recipe</a>
+      </div>
+        </div>
+
+      </div>
+
+      `;
+    });
+  }
+
   // displays drinks with ingredients
   displayDrinksWithIngredients(drinks) {
     // Show the Results
@@ -83,6 +112,25 @@ class UI {
     return ingredientsTemplate;
   }
 
+  // display single recipe
+  displaySingleRecipe(recipe) {
+    // get the variables
+    const modalTitle = document.querySelector('.modal-title'),
+      modalDescription = document.querySelector(
+        '.modal-body .description-text'
+      ),
+      modalIngredients = document.querySelector(
+        '.modal-body .ingredient-list .list-group'
+      );
+
+    // set the values
+    modalTitle.innerHTML = recipe.strDrink;
+    modalDescription.innerHTML = recipe.strInstructions;
+
+    // display the ingredients
+    modalIngredients.innerHTML = this.displayIngredients(recipe);
+  }
+
   //print message
   printMessage(message, className) {
     const div = document.createElement('div');
@@ -102,5 +150,11 @@ class UI {
     setTimeout(() => {
       document.querySelector('.alert').remove();
     }, 3000);
+  }
+
+  // clear previous results
+  clearResults() {
+    const resultsDiv = document.querySelector('#results');
+    resultsDiv.innerHTML = '';
   }
 }
